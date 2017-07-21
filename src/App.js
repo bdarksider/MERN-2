@@ -1,4 +1,12 @@
+class BugList extends React.Component {
+  render() {
+    return (
+      <div>Bug List here!</div>
+    )
+  }
+}
+
 ReactDOM.render(
-  <h1>Hello, arc!</h1>, 
-  document.getElementById('example')
+  <BugList />,
+  document.getElementById('main')
 );
