@@ -11,7 +11,7 @@ class BugFilter extends React.Component {
 class BugTable extends React.Component {
   render() {
     var bugRows = this.props.bugs.map(function (bug) {
-      return React.createElement(BugRow, { key: bug.id, bug: bug });
+      return React.createElement(BugRow, { key: bug._id, bug: bug });
     });
 
     return React.createElement(
@@ -96,7 +96,7 @@ class BugRow extends React.Component {
       React.createElement(
         "td",
         null,
-        this.props.bug.id
+        this.props.bug._id
       ),
       React.createElement(
         "td",
