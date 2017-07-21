@@ -6,14 +6,20 @@ var bugs = [
 
 class BugFilter extends React.Component {
   render() {
+    console.log("Rendering BugFilter");
     return (
-        <div>Bug Filter</div>
+        <div>A way to filter the list of bugs would come here.</div>
     )
   }
 }
 
 class BugTable extends React.Component {
   render() {
+    console.log("Rendering bug table, num items:", this.props.bugs.length);
+    var bugRows = this.props.bugs.map(function(bug) {
+        return <BugRow key={bug.id} bug={bug} />
+    });
+
     return (
         <table>
           <thead>
@@ -26,8 +32,7 @@ class BugTable extends React.Component {
               </tr>
           </thead>
           <tbody>
-            <BugRow id={1} priority="P1" status="Open" owner="Ravan" title="App crashes on open" />
-            <BugRow id={2} priority="P2" status="New" owner="Eddie" title="Misaligned border on panel" />
+            {bugRows}
           </tbody>
         </table>
     )
@@ -36,6 +41,7 @@ class BugTable extends React.Component {
 
 class BugAdd extends React.Component {
   render() {
+    console.log("Rendering BugAdd");
     return (
         <div>Add Bug</div>
     )
@@ -44,28 +50,48 @@ class BugAdd extends React.Component {
 
 class BugRow extends React.Component {
     render() {
+        console.log("Rendering BugRow:", this.props.bug);
         return (
             <tr>
-                <td>{this.props.id}</td>
-                <td>{this.props.status}</td>
-                <td>{this.props.priority}</td>
-                <td>{this.props.owner}</td>
-                <td>{this.props.title}</td>
+                <td>{this.props.bug.id}</td>
+                <td>{this.props.bug.status}</td>
+                <td>{this.props.bug.priority}</td>
+                <td>{this.props.bug.owner}</td>
+                <td>{this.props.bug.title}</td>
             </tr>
         )
     }
 }
 
 class BugList extends React.Component {
+  
+  constructor() {
+    super();
+    this.state = {bugs: bugs};
+  }
+
+  testMethod() {
+    var nextId = this.state.bugs.length + 1;
+    this.addBug({id: nextId, priority: 'P2', status:'New', owner:'Pieta', title:'Warning on console'});
+  }
+
+  addBug(bug) {
+    console.log("Adding bug:", bug);
+    var bugList = [...this.state.bugs];
+    bugList.push(bug);
+    this.setState({bugs: bugList});
+  }
+
   render() {
     return (
       <div>
           <h1>Bug Tracker</h1>
           <BugFilter />
           <hr />
-          <BugTable />
+          <BugTable bugs={this.state.bugs}/>
           <hr />
           <BugAdd />
+          <button onClick={() => this.testMethod()}>Test</button>
       </div>
     )
   }
