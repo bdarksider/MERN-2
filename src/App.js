@@ -6,7 +6,6 @@ var bugs = [
 
 class BugFilter extends React.Component {
   render() {
-    console.log("Rendering BugFilter");
     return (
         <div>A way to filter the list of bugs would come here.</div>
     )
@@ -15,7 +14,6 @@ class BugFilter extends React.Component {
 
 class BugTable extends React.Component {
   render() {
-    console.log("Rendering bug table, num items:", this.props.bugs.length);
     var bugRows = this.props.bugs.map(function(bug) {
         return <BugRow key={bug.id} bug={bug} />
     });
@@ -41,16 +39,30 @@ class BugTable extends React.Component {
 
 class BugAdd extends React.Component {
   render() {
-    console.log("Rendering BugAdd");
     return (
-        <div>Add Bug</div>
+        <div>
+           <form name="bugAdd">
+             <input type="text" name="owner" placeholder="Owner" />
+             <input type="text" name="title" placeholder="Title" />
+             <button onClick={(e) => this.handleSubmit(e)}>Add Bug</button>
+           </form>
+        </div>
     )
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    var form = document.forms.bugAdd;
+    this.props.addBug({owner: form.owner.value, title: form.title.value, status: 'New', priority: 'P1'});
+    // clear the form for the next input
+    form.owner.value = ""; 
+    form.title.value = "";
   }
 }
 
 class BugRow extends React.Component {
     render() {
-        console.log("Rendering BugRow:", this.props.bug);
+
         return (
             <tr>
                 <td>{this.props.bug.id}</td>
@@ -68,16 +80,12 @@ class BugList extends React.Component {
   constructor() {
     super();
     this.state = {bugs: bugs};
-  }
-
-  testMethod() {
-    var nextId = this.state.bugs.length + 1;
-    this.addBug({id: nextId, priority: 'P2', status:'New', owner:'Pieta', title:'Warning on console'});
+    this.addBug = this.addBug.bind(this);
   }
 
   addBug(bug) {
-    console.log("Adding bug:", bug);
     var bugList = [...this.state.bugs];
+    bug.id = this.state.bugs.length + 1;
     bugList.push(bug);
     this.setState({bugs: bugList});
   }
@@ -90,8 +98,7 @@ class BugList extends React.Component {
           <hr />
           <BugTable bugs={this.state.bugs}/>
           <hr />
-          <BugAdd />
-          <button onClick={() => this.testMethod()}>Test</button>
+          <BugAdd addBug={this.addBug} />
       </div>
     )
   }

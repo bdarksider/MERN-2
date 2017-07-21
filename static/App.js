@@ -2,7 +2,6 @@ var bugs = [{ id: 1, priority: "P1", status: "Open", owner: "Ravan", title: "App
 
 class BugFilter extends React.Component {
   render() {
-    console.log("Rendering BugFilter");
     return React.createElement(
       "div",
       null,
@@ -13,7 +12,6 @@ class BugFilter extends React.Component {
 
 class BugTable extends React.Component {
   render() {
-    console.log("Rendering bug table, num items:", this.props.bugs.length);
     var bugRows = this.props.bugs.map(function (bug) {
       return React.createElement(BugRow, { key: bug.id, bug: bug });
     });
@@ -65,18 +63,36 @@ class BugTable extends React.Component {
 
 class BugAdd extends React.Component {
   render() {
-    console.log("Rendering BugAdd");
     return React.createElement(
       "div",
       null,
-      "Add Bug"
+      React.createElement(
+        "form",
+        { name: "bugAdd" },
+        React.createElement("input", { type: "text", name: "owner", placeholder: "Owner" }),
+        React.createElement("input", { type: "text", name: "title", placeholder: "Title" }),
+        React.createElement(
+          "button",
+          { onClick: e => this.handleSubmit(e) },
+          "Add Bug"
+        )
+      )
     );
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    var form = document.forms.bugAdd;
+    this.props.addBug({ owner: form.owner.value, title: form.title.value, status: 'New', priority: 'P1' });
+    // clear the form for the next input
+    form.owner.value = "";
+    form.title.value = "";
   }
 }
 
 class BugRow extends React.Component {
   render() {
-    console.log("Rendering BugRow:", this.props.bug);
+
     return React.createElement(
       "tr",
       null,
@@ -114,16 +130,12 @@ class BugList extends React.Component {
   constructor() {
     super();
     this.state = { bugs: bugs };
-  }
-
-  testMethod() {
-    var nextId = this.state.bugs.length + 1;
-    this.addBug({ id: nextId, priority: 'P2', status: 'New', owner: 'Pieta', title: 'Warning on console' });
+    this.addBug = this.addBug.bind(this);
   }
 
   addBug(bug) {
-    console.log("Adding bug:", bug);
     var bugList = [...this.state.bugs];
+    bug.id = this.state.bugs.length + 1;
     bugList.push(bug);
     this.setState({ bugs: bugList });
   }
@@ -141,12 +153,7 @@ class BugList extends React.Component {
       React.createElement("hr", null),
       React.createElement(BugTable, { bugs: this.state.bugs }),
       React.createElement("hr", null),
-      React.createElement(BugAdd, null),
-      React.createElement(
-        "button",
-        { onClick: () => this.testMethod() },
-        "Test"
-      )
+      React.createElement(BugAdd, { addBug: this.addBug })
     );
   }
 }
