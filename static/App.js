@@ -1,5 +1,3 @@
-var bugs = [{ id: 1, priority: "P1", status: "Open", owner: "Ravan", title: "App crashes on open" }, { id: 2, priority: "P2", status: "New", owner: "Eddie", title: "Misaligned border on panel" }];
-
 class BugFilter extends React.Component {
   render() {
     return React.createElement(
@@ -128,15 +126,33 @@ class BugList extends React.Component {
 
   constructor() {
     super();
-    this.state = { bugs: bugs };
+    this.state = { bugs: [] };
     this.addBug = this.addBug.bind(this);
   }
 
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData() {
+    fetch('/api/bugs/').then(response => response.json()).then(bugs => {
+      this.setState({ bugs });
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
   addBug(bug) {
-    var bugList = [...this.state.bugs];
-    bug.id = this.state.bugs.length + 1;
-    bugList.push(bug);
-    this.setState({ bugs: bugList });
+
+    fetch('/api/bugs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bug)
+    }).then(res => res.json()).then(bug => {
+      console.log(bug);
+      var bugsModified = [...this.state.bugs, bug];
+      this.setState({ bugs: bugsModified });
+    });
   }
 
   render() {
